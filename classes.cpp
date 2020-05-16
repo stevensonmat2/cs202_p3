@@ -1,3 +1,24 @@
+/*
+Matt Stevenson
+CS202 program #3
+05/15/2020
+
+classes.cpp
+
+this file contains the function defintions for the String, Link, and Link
+derived classes.
+
+the String class functions provides easy to use functionality for working with
+and comparing arrays of characters.
+
+the Link class functions are common to all derived classes, and serve to allow
+users to compare and work with other Link objects.
+
+the three derived classes feature no new functions, and only their contructors
+include unique functinality in that they set their subject field to match their
+class type.
+*/
+
 #include "classes.h"
 
 
@@ -126,6 +147,56 @@ bool String::operator == (const String &compare)
 	{
 		return true;
 	}
+	
+	//if first indicies match, check for a partial match
+	if (chars[0] == compare.chars[0])
+	{
+		int i = 1;//create index tracker
+		
+		//call recursive partial match function
+		return partial_name(compare, i);
+	}
+
+	return false;
+}
+
+
+
+//recursive function to check if user input is partial match to String's
+//array. returns true if so
+bool String::partial_name(const String &compare, int i)
+{
+	//if current index is less than total length of argument's array
+	if (i < (int)strlen(compare.chars))
+	{
+		//if current indicies match
+		if (chars[i] == compare.chars[i])
+		{
+			//check next index
+			return partial_name(compare, ++i);
+		}
+		
+		//if a mismatch is found, exit with false
+		else
+		{
+			return false;
+		}
+	}
+	
+	//if no mismatches found, return true
+	return true;
+}
+
+
+
+//returns true if argument array equal to calling object's
+bool String::operator == (const char *check)
+{
+	//compare calling object's array to argument's
+	if (strcmp(chars, check) == 0)
+	{
+		return true;
+	}
 
 	return false;
 }
@@ -223,6 +294,12 @@ Link & Link::operator = (const Link &to_copy)
 
 	//copy argument data into new object
 	*name = *to_copy.name;
+	
+	subject = new String;
+
+	*subject = *to_copy.subject;
+
+	priority = to_copy.priority;
 
 	return *this;
 }
@@ -236,7 +313,8 @@ Link & Link::operator = (const Link &to_copy)
 //returns true if argument's name greater than calling object's
 bool Link::operator < (const Link &compare)
 {
-	if (name < compare.name)
+	//call String's operator
+	if (*name < *compare.name)
 	{
 		return true;
 	}
@@ -249,7 +327,8 @@ bool Link::operator < (const Link &compare)
 //returns true if argument's name less than calling object's
 bool Link::operator > (const Link &compare)
 {
-	if (name > compare.name)
+	//call String's operator
+	if (*name > *compare.name)
 	{
 		return true;
 	}
@@ -262,7 +341,8 @@ bool Link::operator > (const Link &compare)
 //returns true if argument's name greater/equal to object's
 bool Link::operator <= (const Link &compare)
 {
-	if (name <= compare.name)
+	//call String's operator
+	if (*name <= *compare.name)
 	{
 		return true;
 	}
@@ -275,7 +355,8 @@ bool Link::operator <= (const Link &compare)
 //returns true if argument's name less than/equal to object's
 bool Link::operator >= (const Link &compare)
 {
-	if (name >= compare.name)
+	//call String's operator
+	if (*name >= *compare.name)
 	{
 		return true;
 	}
@@ -288,7 +369,8 @@ bool Link::operator >= (const Link &compare)
 //returns true if argument's name equal to calling object's
 bool Link::operator == (const Link &compare)
 {
-	if (name == compare.name)
+	//call String's operator
+	if (*name == *compare.name)
 	{
 		return true;
 	}
@@ -318,6 +400,7 @@ bool Link::operator < (const String &compare)
 //returns true if argument array less than calling object's
 bool Link::operator > (const String &compare)
 {
+	//call String's operator
 	if (*name > compare)
 	{
 		return true;
@@ -331,6 +414,7 @@ bool Link::operator > (const String &compare)
 //returns true if argument array less than or equal to object's
 bool Link::operator <= (const String &compare)
 {
+	//call String's operator
 	if (*name <= compare)
 	{
 		return true;
@@ -344,6 +428,7 @@ bool Link::operator <= (const String &compare)
 //returns true if argument array greater than/equal object's
 bool Link::operator >= (const String &compare)
 {
+	//call String's operator
 	if (*name >= compare)
 	{
 		return true;
@@ -357,7 +442,27 @@ bool Link::operator >= (const String &compare)
 //returns true if argument array equal to calling object's
 bool Link::operator == (const String &compare)
 {
+	//check if Link object's name matches or partial matches
 	if (*name == compare)
+	{
+		return true;
+	}
+	
+	//checks if Link subject matches or partial matches
+	if (*subject == compare)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+
+//returns true if argument's priority equal to argument
+bool Link::operator == (int p)
+{
+	if (priority == p)
 	{
 		return true;
 	}
@@ -370,9 +475,9 @@ bool Link::operator == (const String &compare)
 //returns true if argument array not equal to calling object's
 ostream & operator << (ostream &out, const Link &link)
 {
-	out << *link.name << endl;
-//	    << *link.subject << endl
-	    //<< link.priority;
+	out << *link.name << endl
+	    << *link.subject << endl
+	    << link.priority;
 
 	return out;
 }
@@ -388,3 +493,104 @@ istream & operator >> (istream &in, Link &link)
 
 	return in;
 }
+
+
+//sets calling object's priority to argument
+void Link::set_p(int p)
+{
+	priority = p;
+}
+
+
+
+//returns member data via argument ofstream object
+void Link::read_out(ofstream &out)
+{
+	out << *subject << ","
+		<< priority << ","
+		<< *name << endl;
+}
+
+
+
+//SCHOOL CLASS/////////////////////////////////////////////////////////////////
+
+
+
+//constructor; set subject to class type and call parent constructor
+School::School(): Link()
+{
+	subject = new String;
+	*subject = "school";
+}
+
+
+
+//copy constructor
+School::School(const Link &to_copy): Link(to_copy)
+{
+	subject = new String;
+	*subject = "school";
+}
+
+
+School::~School()
+{
+}
+
+
+
+//WORK CLASS///////////////////////////////////////////////////////////////////
+
+
+
+//constructor; set subject to class type and call parent constructor
+Work::Work(): Link()
+{
+	subject = new String;
+	*subject = "work";
+}
+
+
+
+//copy constructor
+Work::Work(const Link &to_copy): Link(to_copy)
+{
+	subject = new String;
+	*subject = "work";
+}
+
+
+
+Work::~Work()
+{
+}
+
+
+
+//FUN CLASS////////////////////////////////////////////////////////////////////
+
+
+
+//constructor; set subject to class type and call parent constructor
+Fun::Fun(): Link()
+{
+	subject = new String;
+	*subject = "fun";
+}
+
+
+
+//copy constructor
+Fun::Fun(const Link &to_copy): Link(to_copy)
+{
+	subject = new String;
+	*subject = "fun";
+}
+
+
+
+Fun::~Fun()
+{
+}
+

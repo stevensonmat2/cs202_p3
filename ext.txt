@@ -1,3 +1,7 @@
-zoom meeting
-cool article
-research
+fun,1,cool article
+work,3,assignment
+fun,2,meet up
+school,2,reading
+fun,4,news article
+work,3,project
+work,3,zoom meeting

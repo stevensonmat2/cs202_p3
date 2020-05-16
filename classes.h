@@ -1,3 +1,22 @@
+/*
+Matt Stevenson
+CS202 program #3
+05/15/2020
+
+classes.h
+
+this file containts the class defintions and prototypes for the String, Link,
+and Link derived classes (School, Work, Fun). 
+
+the String class provides functionality to work with arrays of characters. 
+
+the Link class is a base class that provides common functionality for its 
+derived classes. 
+
+the three derived classes represent types of online resources a user may want
+to keep track of.
+*/
+
 #include <cctype>
 #include <cstring>
 #include <iostream>
@@ -21,6 +40,9 @@ class String
 		//copies argument data into calling object
 		String & operator = (const char *);
 
+		//copies argument data into calling object
+		//String & operator = (const char []);
+
 		//returns true if argument array greater than calling object's
 		bool operator < (const String&);
 		
@@ -36,6 +58,9 @@ class String
 		//returns true if argument array equal to calling object's
 		bool operator == (const String&);
 		
+		//returns true if argument array equal to calling object's
+		bool operator == (const char *);
+
 		//returns true if argument array not equal to calling object's
 		bool operator != (const String&);
 		
@@ -48,21 +73,24 @@ class String
 	private:
 		//pointer to array of characters
 		char *chars;	
+		
+		bool partial_name(const String &, int);
 };
 
 
-//abstract base class. serves as parent for School, Work, and Fun classes.
+//base class. serves as parent for School, Work, and Fun classes.
 //provides common base functions and data members for derived classes
 class Link
 {
 	public:
+		//constructor
 		Link();
 
 		//copy constructor
 		Link(const Link &);
 		
 		//destructor
-		~Link();
+		virtual ~Link();
 		
 		//LINK OPERATORS///////////////////////////////////////////////
 
@@ -83,6 +111,9 @@ class Link
 		
 		//returns true if argument's name equal to calling object's
 		bool operator == (const Link&);
+		
+		//returns true if argument's priority equal to argument
+		bool operator == (int);
 		
 		//returns true if argument's name not equal to calling object's
 		bool operator != (const Link&);
@@ -113,6 +144,10 @@ class Link
 		//sets input to calling object's name member
 		friend istream & operator >> (istream &, Link &);
 
+		void set_p(int);
+
+		void read_out(ofstream &);
+
 	protected:
 		//name of of object
 		String *name;
@@ -122,4 +157,42 @@ class Link
 
 		//priority of object
 		int priority;
+};
+
+
+
+//derived class of Link
+class School:public Link
+{
+	public:
+		School();
+		School(const Link &);
+		~School();
+
+
+};
+
+
+
+//derived class of Link
+class Work:public Link
+{
+	public:
+		Work();
+		Work(const Link &);
+		~Work();
+
+};
+
+
+
+//derived class of Link
+class Fun:public Link
+{
+	public:
+		Fun();
+		Fun(const Link &);
+		~Fun();
+
+
 };

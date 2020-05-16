@@ -1,4 +1,21 @@
+/*
+Matt Stevenson
+CS202 program #3
+05/15/2020
+
+client.cpp
+
+this file contains all function definitions for the Client class.
+
+these functions provide access to the Client's Data object, enabling the use
+of CRUD functionality of the BST of Link derived objects.
+
+*/
+
+
+
 #include "client.h"
+
 
 
 //constructor. instantiates a new Data object at the Data pointer
@@ -34,8 +51,7 @@ void Client::menu()
 			<< "(5) display all Links of subject" << endl
 			<< "(6) remove a Link by name" << endl
 			<< "(7) remove all Links" << endl
-			<< "(8) edit a Link's priority" << endl
-			<< "(9) save Links to file" << endl
+			<< "(8) save Links to file" << endl
 			<< "(0) exit program" << endl
 			<< endl
 			<< "choose command: ";
@@ -75,11 +91,7 @@ void Client::menu()
 				remove_all();
 				break;
 
-			case 8: //edit a Link's priority
-				edit_priority();
-				break;
-
-			case 9: //save Links to file (append or overwrite)
+			case 8: //save Links to file (append or overwrite)
 				save_to_file();
 				break;
 
@@ -122,126 +134,198 @@ void Client::add()
 	switch (input)
 	{
 		case 1: //create a school class object
-			//temp = new School;
-			//build(temp);
+			temp = new School;
+			build(*temp);
 			break;
+
 		case 2: //create a Work class object
-			//temp = new Work;
-			//build(temp);
+			temp = new Work;
+			build(*temp);
 			break;
+
 		case 3: //create a Fun class object
-			//temp = new Fun;
-			//build(temp);
+			temp = new Fun;
+			build(*temp);
 			break;
 	}
 
 	//copy new object into BST
 	*data += *temp;
+
+	delete temp;
+
+	cout << "added!" << endl
+		<< endl;
 }
 
 
 
+//prompts user for the name of a Link object to display; if found, object
+//is retrieved and its display operator is invoked
 void Client::display_name()
 {
-	String temp;
+	String temp;//create String to store name
 
 	cout << "enter name: ";
 	
+	//store name in String obj
 	cin >> temp;
 	cin.ignore(100, '\n');
 
-	//use data search operator to find object matching user input
+	//use Data search operator to find object matching user input
 	Link *link = NULL;
 	link = &((*data)[temp]);
 	
-	cout << *link;
+	//if found, use operator to display obj data
+	if (link) cout << *link << endl << endl;
+
+	else cout << "no match found" << endl << endl;
 }
 
 
 
+//outputs data for all Link objects in BST by calling data object's
+//display all function
 void Client::display_all()
 {
-
+	if (!data->display_all())
+	{
+		cout << "no links saved" << endl
+			<< endl;
+	}
 }
 
 
 
+//outputs data for all Link objects with priority lvl matching user input
+//by calling data object's function
 void Client::display_all_p()
 {
+	int input = 0;//stores user input
 
+	cout << "enter priority lvl (1-5): ";
+
+	cin >> input;
+	cin.ignore(100, '\n');
+
+	if (!data->display_all_p(input))
+	{
+		cout << "no matches found" << endl
+			<< endl;
+	}
 }
 
 
 
+//outputs data for all Link objects of user provided subject by calling data
+//objects display all by subject function
 void Client::display_all_subject()
 {
+	String temp;//stores user input
 
+	cout << "enter subject (work, school, fun): ";
+
+	cin >> temp;
+	cin.ignore(100, '\n');
+
+	if (!data->display_all_subject(temp))
+	{
+		cout << "no matches found" << endl
+			<< endl;
+	}
 }
 
 
 
+//prompts user for name of Link object to remove. if found, it is removed
+//from Data object's BST
 void Client::remove()
 {
+	String remove;//create String object to store name
 
+	cout << "enter name to remove: ";
+	
+	//use String's operator to store user input
+	cin >> remove;
+	cin.ignore(100, '\n');
+	
+	cout << endl;
+	
+	//search for matcing object and save result to ptr
+	Link *link = NULL;
+	link = &((*data)[remove]);
+
+	//if object matching String is found
+	if (link)
+	{
+		//use Data's operator to remove object
+		*data -= remove;
+
+		cout << "link removed!" << endl << endl;
+	}
+
+	else
+	{
+		cout << "link not found" << endl
+			<< endl;
+	}
 }
 
 
+//calls Data object's remove all function to delete all Link objects
 void Client::remove_all()
 {
+	if (!data->remove_all())
+	{
+		cout << "nothing to delete" << endl
+			<< endl;
+	}
 
+	cout << "links deleted!" << endl << endl;
 }
 
 
 
-void Client::edit_priority()
-{
-
-}
-
-
-
+//calls data object's function to write BST to external file
 void Client::save_to_file()
 {
-
+	if (!data->read_out())
+	{
+		cout << "data not saved" << endl
+			<< endl;
+	}
 }
 
 
 
 //prompts user for info needed to construct Link derived object
-void Client::build()
+void Client::build(Link &obj)
 {
-	char temp[100];//stores user input
 	int input = 0;//stores user input
 
 	cout << "enter name: ";
 
 	//use overloaded operator to set objects name to user input
-	cin >> temp;
+	cin >> obj;
 	cin.ignore(100, '\n');
-
-	cout << "enter url (eg 'www.link1.com'): ";
-
-	cin.get(temp, 100, '\n');
-	cin.ignore(100, '\n');
-	
-	//call object's set url function
-	//temp.set_url(temp);	
 
 	do//prompt user for priorty until valid input given
 	{
 		cout << "enter priority (1-5): ";
 
+		cin >> input;
+		cin.ignore(100, '\n');
+
 	} while (input < 1 || input > 5);
 
-	cin >> input;
-	cin.ignore(100, '\n');
-	
 	//call object's set priority function
-	//temp.set_priority(input);
+	obj.set_p(input);
 }
 
 
 
+//calls Data objects read in function and passes in name of external
+//file to read from
 void Client::read_in()
 {
 	data->read_in();
